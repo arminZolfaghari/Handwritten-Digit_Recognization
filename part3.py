@@ -105,7 +105,8 @@ def calculate_cost(A3, y):
 
 
 # give array and batch_size => return all batches
-def get_all_batches(batch_size, arr, arr_size):
+def get_all_batches(batch_size, arr):
+    arr_size = len(arr)
     batches = []
     for i in range(0, arr_size, batch_size):
         batch = arr[i: i + batch_size]
@@ -145,6 +146,22 @@ def initialize_grad_W_b():
     return grad_W1, grad_W2, grad_W3, grad_b1, grad_b2, grad_b3
 
 
+# this function calculate next A with A_prev, W and b
+def linear_activation_forward(A_prev, W, b, activationType):
+    if activationType == "sigmoid":
+        # Z = np.dot(W, A_prev) + b
+        Z = (W @ A_prev) + b
+        A = sigmoid(Z)
+    return Z, A
+
+
+# check the guess label with original label, if correct return 1, else return 0
+def check_guess_label(guess_label_index, image):
+    is_correct = 0
+    if image[1][guess_label_index] == 1:
+        is_correct = 1
+    return is_correct
+
 
 train_set, test_set = reading_files()
 W1, W2, W3, b1, b2, b3 = initialize_W_b()
@@ -153,7 +170,7 @@ number_of_correct_answer = 0
 total_cost_arr_in_batch = []
 
 for n in range(0, number_of_epochs):
-    new_train_set = train_set[0:number_of_images]
+    new_train_set = train_set[0 : number_of_images]
     np.random.shuffle(new_train_set)
     batches = get_all_batches(batch_size, new_train_set, 100)
 
@@ -228,4 +245,4 @@ for n in range(0, number_of_epochs):
 print("Accuracy :", (number_of_correct_answer / (number_of_epochs * number_of_images)) * 100)
 plt.plot(total_cost_arr_in_batch)
 plt.show()
-exit()
+
