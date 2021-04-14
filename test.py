@@ -109,6 +109,11 @@ plt.show()
 
 
 
+
+
+
+
+
 # backpropagation
       # for output layer
       for j in range(10):
@@ -138,3 +143,29 @@ plt.show()
         for k in range(784):
           grad_W1[j,k] += activation_deriv(z_1[j,0], 'sigmoid') * grad_a1[j,0] * tmp_train_df[0][image_index][k]
           grad_b1[j,0] += activation_deriv(z_1[j,0], 'sigmoid') * grad_a1[j,0]
+
+        # backpropagation
+        # for output layer
+grad_W3 += (2  activation_deriv(z_3, activation_func)(a_3 - data[1][image_index]))
+
+@(np.transpose(a_2))
+
+
+grad_b3 += (2  activation_deriv(z_3, activation_func)(a_3 - data[1][image_index]))
+
+grad_a2 = np.zeros((16, 1))
+grad_a2 = np.transpose(W[2]) @ (2  activation_deriv(z_3, activation_func)(a_3 - data[1][image_index]))
+
+
+# for hidden layer 2
+grad_W2 += (activation_deriv(z_2, activation_func) * grad_a2) @ (np.transpose(a_1))
+grad_b2 += (activation_deriv(z_2, activation_func) * grad_a2)
+
+grad_a1 = np.zeros((16, 1))
+grad_a1 = np.transpose(W[1]) @ (2  activation_deriv(z_2, activation_func)
+grad_a2)
+
+
+# for hidden layer 1
+grad_W1 += (activation_deriv(z_1, activation_func) * grad_a1) @ (np.transpose(data[0][image_index]))
+grad_b1 += (activation_deriv(z_1, activation_func) * grad_a1)
