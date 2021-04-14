@@ -2,11 +2,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# initialize parameters
-n_h1 = n_h2 = 16  # hidden layer 1, 2
-n_x = 784  # size of the input layer
-n_y = 10  # size of the output layer
-
 
 # A function to plot images
 def show_image(img):
@@ -63,8 +58,9 @@ def reading_files():
 
 
 # Plotting an image
-train_set, test_set = reading_files()
-show_image(train_set[5][0])
-plt.show()
-print(np.argmax(train_set[5][1]))
+# train_set, test_set = reading_files()
+# show_image(train_set[5][0])
+# plt.show()
+# print(np.argmax(train_set[5][1]))
+print("hello")
 
