@@ -98,3 +98,43 @@ import matplotlib.pyplot as plt
 
 plt.plot(cost_arr)
 plt.show()
+
+
+
+
+
+
+
+
+
+
+
+# backpropagation
+      # for output layer
+      for j in range(10):
+        for k in range(16):
+          grad_W3[j,k] += activation_deriv(z_3[j,0], 'sigmoid') * (2 * (a_3[j,0] - tmp_train_df[1][image_index][j])) * a_2[k,0]
+          grad_b3[j,0] += activation_deriv(z_3[j,0], 'sigmoid') * (2 * (a_3[j,0] - tmp_train_df[1][image_index][j]))
+
+      grad_a2 = np.zeros((16,1))
+      for k in range(16):
+        for j in range(10):
+          grad_a2[k,0] += W_3[j,k] * activation_deriv(z_3[j,0], 'sigmoid') * (2 * ( a_3[j,0] - tmp_train_df[1][image_index][j]))
+
+      # for hidden layer 2
+      for j in range(16):
+        for k in range(16):
+          grad_W2[j,k] += activation_deriv(z_2[j,0], 'sigmoid') * grad_a2[j,0] * a_1[k,0]
+          grad_b2[j,0] += activation_deriv(z_2[j,0], 'sigmoid') * grad_a2[j,0]
+
+      grad_a1 = np.zeros((16,1))
+      for k in range(16):
+        for j in range(16):
+          grad_a1[k,0] += W_2[j,k] * activation_deriv(z_2[j,0], 'sigmoid') * grad_a2[j,0]
+
+
+      # for hidden layer 1
+      for j in range(16):
+        for k in range(784):
+          grad_W1[j,k] += activation_deriv(z_1[j,0], 'sigmoid') * grad_a1[j,0] * tmp_train_df[0][image_index][k]
+          grad_b1[j,0] += activation_deriv(z_1[j,0], 'sigmoid') * grad_a1[j,0]
