@@ -57,10 +57,9 @@ def reading_files():
     return train_set, test_set
 
 
-# Plotting an image
-# train_set, test_set = reading_files()
-# show_image(train_set[5][0])
-# plt.show()
-# print(np.argmax(train_set[5][1]))
-print("hello")
-
+if __name__ == "__main__":
+    # Plotting an image
+    train_set, test_set = reading_files()
+    show_image(train_set[5][0])
+    plt.show()
+    print(np.argmax(train_set[5][1]))
