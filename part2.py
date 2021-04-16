@@ -69,5 +69,5 @@ if __name__ == "__main__":
     number_of_images = 100
     new_train_set = train_set[0: number_of_images]
     W1, W2, W3, b1, b2, b3 = initialize_W_b()
-    accuracy = calculate_accuracy(W1, W2, W3, b1, b2, b3, new_train_set)
+    accuracy = calculate_accuracy(W1, W2, W3, b1, b2, b3, new_train_set, "sigmoid")
     print("Accuracy : ", accuracy)
