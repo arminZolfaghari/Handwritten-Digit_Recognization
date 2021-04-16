@@ -1,4 +1,6 @@
 # part 2
+import math
+
 import numpy as np
 import matplotlib.pyplot as plt
 from part1 import reading_files
@@ -25,12 +27,19 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
+def tanh(x):
+    return np.tanh(x)
+
+
 # this function calculate next A with A_prev, W and b
 def linear_activation_forward(A_prev, W, b, activationType):
     if activationType == "sigmoid":
         # Z = np.dot(W, A_prev) + b
         Z = (W @ A_prev) + b
         A = sigmoid(Z)
+    if activationType == "tanh":
+        Z = (W @ A_prev) + b
+        A = tanh(Z)
     return Z, A
 
 
@@ -42,12 +51,12 @@ def check_guess_label(guess_label_index, image):
     return is_correct
 
 
-def calculate_accuracy(W1, W2, W3, b1, b2, b3, dataset):
+def calculate_accuracy(W1, W2, W3, b1, b2, b3, dataset, activationType):
     number_of_correct_answer = 0
     for image in dataset:
-        Z1, A1 = linear_activation_forward(image[0], W1, b1, "sigmoid")
-        Z2, A2 = linear_activation_forward(A1, W2, b2, "sigmoid")
-        Z3, A3 = linear_activation_forward(A2, W3, b3, "sigmoid")
+        Z1, A1 = linear_activation_forward(image[0], W1, b1, activationType)
+        Z2, A2 = linear_activation_forward(A1, W2, b2, activationType)
+        Z3, A3 = linear_activation_forward(A2, W3, b3, activationType)
         max_value_index_in_A3 = np.argmax(A3, 0)  # guess label
         number_of_correct_answer += check_guess_label(max_value_index_in_A3, image)
 

@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from part1 import reading_files
-from part2 import initialize_W_b, linear_activation_forward, sigmoid, calculate_accuracy
+from part2 import initialize_W_b, linear_activation_forward, sigmoid, calculate_accuracy, tanh
 
 # initialize parameters
 n_h1 = n_h2 = 16  # hidden layer 1, 2
@@ -12,34 +12,34 @@ learning_rate, number_of_epochs, batch_size, number_of_images = 1, 20, 10, 100
 
 
 def update_grad_W_b_in_layer(A3, A2, A1, W3, W2, Z3, Z2, Z1, image, grad_W3, grad_W2, grad_W1, grad_b3, grad_b2,
-                             grad_b1):
+                             grad_b1, activationType):
     # layer n_y and n_h2
     for j in range(n_y):
         for k in range(n_h2):
-            grad_W3[j][k] += (2 * (A3[j][0] - image[1][j])) * sigmoid_derivative(Z3[j][0]) * (A2[k][0])
-            grad_b3[j][0] += (2 * (A3[j][0] - image[1][j])) * sigmoid_derivative(Z3[j][0])
+            grad_W3[j][k] += (2 * (A3[j][0] - image[1][j])) * derivative_activation(Z3[j][0], activationType) * (A2[k][0])
+            grad_b3[j][0] += (2 * (A3[j][0] - image[1][j])) * derivative_activation(Z3[j][0], activationType)
 
     grad_A2 = np.zeros((n_h2, 1))
     for k in range(n_h2):
         for j in range(n_y):
-            grad_A2[k][0] += (2 * (A3[j][0] - image[1][j])) * sigmoid_derivative(Z3[j][0]) * W3[j][k]
+            grad_A2[k][0] += (2 * (A3[j][0] - image[1][j])) * derivative_activation(Z3[j][0], activationType) * W3[j][k]
 
     # layer n_h2 and n_h1
     for j in range(n_h2):
         for k in range(n_h1):
-            grad_W2[j][k] += sigmoid_derivative(Z2[j][0]) * (grad_A2[j][0]) * A1[k][0]
-            grad_b2[j][0] += sigmoid_derivative(Z2[j][0]) * (grad_A2[j][0])
+            grad_W2[j][k] += derivative_activation(Z2[j][0], activationType) * (grad_A2[j][0]) * A1[k][0]
+            grad_b2[j][0] += derivative_activation(Z2[j][0], activationType) * (grad_A2[j][0])
 
     grad_A1 = np.zeros((n_h1, 1))
     for k in range(n_h1):
         for j in range(n_h2):
-            grad_A1[k][0] += W2[j][k] * sigmoid_derivative(Z2[j][0]) * grad_A2[j][0]
+            grad_A1[k][0] += W2[j][k] * derivative_activation(Z2[j][0], activationType) * grad_A2[j][0]
 
     # layer n_h1 and n_x
     for j in range(n_h1):
         for k in range(n_x):
-            grad_W1[j][k] += sigmoid_derivative(Z1[j][0]) * grad_A1[j][0] * image[0][k]
-            grad_b1[j][0] += sigmoid_derivative(Z1[j][0]) * grad_A1[j][0]
+            grad_W1[j][k] += derivative_activation(Z1[j][0], activationType) * grad_A1[j][0] * image[0][k]
+            grad_b1[j][0] += derivative_activation(Z1[j][0], activationType) * grad_A1[j][0]
 
     return grad_W3, grad_W2, grad_W1, grad_b3, grad_b2, grad_b1
 
@@ -70,9 +70,12 @@ def get_all_batches(batch_size, arr):
 
 
 # derivative of sigmoid
-def sigmoid_derivative(x):
-    return (sigmoid(x) * (1 - sigmoid(x)))
-
+def derivative_activation(x, activationType):
+    if activationType == "sigmoid":
+        res = (sigmoid(x) * (1 - sigmoid(x)))
+    if activationType == "tanh":
+        res = (1 - (tanh(x) * tanh(x)))
+    return res
 
 # initialize grad_W matrix and vector grad_b for each layer and initialize to 0
 def initialize_grad_W_b():
@@ -85,7 +88,7 @@ def initialize_grad_W_b():
     return grad_W1, grad_W2, grad_W3, grad_b1, grad_b2, grad_b3
 
 
-def start_learning_without_vectorization(dataset, number_of_epochs, batch_size, learning_rate):
+def start_learning_without_vectorization(dataset, number_of_epochs, batch_size, learning_rate, activationType):
     W1, W2, W3, b1, b2, b3 = initialize_W_b()
     total_cost_arr_in_batch = []
     for n in range(0, number_of_epochs):
@@ -98,9 +101,9 @@ def start_learning_without_vectorization(dataset, number_of_epochs, batch_size, 
             grad_W1, grad_W2, grad_W3, grad_b1, grad_b2, grad_b3 = initialize_grad_W_b()
 
             for image in batch:
-                Z1, A1 = linear_activation_forward(image[0], W1, b1, "sigmoid")
-                Z2, A2 = linear_activation_forward(A1, W2, b2, "sigmoid")
-                Z3, A3 = linear_activation_forward(A2, W3, b3, "sigmoid")
+                Z1, A1 = linear_activation_forward(image[0], W1, b1, activationType)
+                Z2, A2 = linear_activation_forward(A1, W2, b2, activationType)
+                Z3, A3 = linear_activation_forward(A2, W3, b3, activationType)
                 total_cost_in_batch += calculate_cost(A3, image[1])
 
                 # backpropagation calculating
@@ -113,7 +116,7 @@ def start_learning_without_vectorization(dataset, number_of_epochs, batch_size, 
                                                                                                 grad_W1,
                                                                                                 grad_b3,
                                                                                                 grad_b2,
-                                                                                                grad_b1)
+                                                                                                grad_b1, activationType)
 
             total_cost_arr_in_batch.append(total_cost_in_batch)
             # update Wi and bi (end of each batch)
@@ -126,8 +129,8 @@ def start_learning_without_vectorization(dataset, number_of_epochs, batch_size, 
 
 if __name__ == "__main__":
     train_set, test_set = reading_files()
-    W1, W2, W3, b1, b2, b3, total_cost_arr_in_batch = start_learning_without_vectorization(train_set[0: number_of_images], number_of_epochs, batch_size, learning_rate)  # this W,b after learning
-    accuracy = calculate_accuracy(W1, W2, W3, b1, b2, b3, train_set[0: number_of_images])
+    W1, W2, W3, b1, b2, b3, total_cost_arr_in_batch = start_learning_without_vectorization(train_set[0: number_of_images], number_of_epochs, batch_size, learning_rate, "sigmoid")  # this W,b after learning
+    accuracy = calculate_accuracy(W1, W2, W3, b1, b2, b3, train_set[0: number_of_images], "sigmoid")
     print("Accuracy :", accuracy)
     plt.plot(total_cost_arr_in_batch)
     plt.show()
