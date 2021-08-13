@@ -1,5 +1,5 @@
 # Handwritten-Digit_Recognization
-Handwritten Digit Recognition (implement with Feedforward Fully Connected)
+Handwritten Digit Recognition (implemented with Feedforward Fully Connected)
 ### Computational Intelligence Course 1st Project 
 
 In this project a simple `neural network` is implemented in 2 different ways (`MNIST` Dataset is used for training and testing):
